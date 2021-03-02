@@ -7,7 +7,7 @@ echo "running in $SCRIPTPATH"
 #create compartment
 root_compartment_id=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?contains(\"id\",'tenancy')].id | [0]")
 echo -e "\e[1;32m root_compartment_id : $root_compartment_id \e[0m"
-compartment_id=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?contains(\"name\",'$compartment_name')].id | [0]")
+compartment_id=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?\"lifecycle-state\" == 'ACTIVE'] | [?contains(\"name\",'$compartment_name')].id | [0]")
 [ -z "$compartment_id" ] && \
 compartment_id=$(oci iam compartment create --name $compartment_name --description "$compartment_description" --compartment-id $root_compartment_id --query data.id)
 compartment_id=${compartment_id//\"}
