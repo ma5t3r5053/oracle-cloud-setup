@@ -19,10 +19,10 @@ echo -e "\e[1;32m compartment_id : $compartment_id \e[0m"
 
 
 #update cli config
-echo -e "\e[1;32m => update oci cli config \e[0m"
-mkdir ~/.oci
-touch ~/.oci/oci_cli_rc
-echo "[DEFAULT]" >>~/.oci/oci_cli_rc
-echo "compartment-id = "$compartment_id >>~/.oci/oci_cli_rc
+#echo -e "\e[1;32m => update oci cli config \e[0m"
+#mkdir ~/.oci
+#touch ~/.oci/oci_cli_rc
+#echo "[DEFAULT]" >>~/.oci/oci_cli_rc
+#echo "compartment-id = "$compartment_id >>~/.oci/oci_cli_rc
 
 
