@@ -58,6 +58,7 @@ echo -e "\e[1;32m vcn_public_route_table_id : $vcn_public_route_table_id \e[0m"
 #create public subnet
 vcn_public_security_list_ids=${vcn_public_security_list_ids/ID/$vcn_public_security_list_id}
 vcn_public_subnet_id=$(oci network subnet list --compartment-id $compartment_id --vcn-id $vcn_id --raw-output --query "data[?contains(\"display-name\",'$vcn_public_subnet_name')].id | [0]")
+[ -z "$vcn_public_subnet_id" ] && \
 vcn_public_subnet_id=$(oci network subnet create --cidr-block "$vcn_public_subnet_cidr" --compartment-id $compartment_id  --vcn-id $vcn_id --display-name "$vcn_public_subnet_name" --prohibit-public-ip-on-vnic false --route-table-id "$vcn_public_route_table_id" --security-list-ids "$vcn_public_security_list_ids" --wait-for-state AVAILABLE --query data.id)
 vcn_public_subnet_id=${vcn_public_subnet_id//\"}
 echo -e "\e[1;32m vcn_public_subnet_id : $vcn_public_subnet_id \e[0m"
@@ -83,6 +84,7 @@ echo -e "\e[1;32m vcn_private_route_table_id : $vcn_private_route_table_id \e[0m
 #create private subnet
 vcn_private_security_list_ids=${vcn_private_security_list_ids/ID/$vcn_private_security_list_id}
 vcn_private_subnet_id=$(oci network subnet list --compartment-id $compartment_id --vcn-id $vcn_id --raw-output --query "data[?contains(\"display-name\",'$vcn_private_subnet_name')].id | [0]")
+[ -z "$vcn_private_subnet_id" ] && \
 vcn_private_subnet_id=$(oci network subnet create --cidr-block "$vcn_private_subnet_cidr" --compartment-id $compartment_id  --vcn-id $vcn_id --display-name "$vcn_private_subnet_name" --route-table-id "$vcn_private_route_table_id" --security-list-ids "$vcn_private_security_list_ids" --wait-for-state AVAILABLE --query data.id)
 vcn_private_subnet_id=${vcn_private_subnet_id//\"}
 echo -e "\e[1;32m vcn_private_subnet_id : $vcn_private_subnet_id \e[0m"
