@@ -2,15 +2,12 @@
 
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 . $SCRIPTPATH/setup.config
-echo "running in $SCRIPTPATH"
+
+echo -e "\e[1;32m running in $SCRIPTPATH \e[0m"
+echo -e "\e[1;32m => provision \"$vcn_name\" network \e[0m"
 
 #create compartment
-root_compartment_id=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?contains(\"id\",'tenancy')].id | [0]")
-echo -e "\e[1;32m root_compartment_id : $root_compartment_id \e[0m"
 compartment_id=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?\"lifecycle-state\" == 'ACTIVE'] | [?contains(\"name\",'$compartment_name')].id | [0]")
-[ -z "$compartment_id" ] && \
-compartment_id=$(oci iam compartment create --name $compartment_name --description "$compartment_description" --compartment-id $root_compartment_id --query data.id)
-compartment_id=${compartment_id//\"}
 echo -e "\e[1;32m compartment_id : $compartment_id \e[0m"
 
 
@@ -23,6 +20,7 @@ echo -e "\e[1;32m vcn_id : $vcn_id \e[0m"
 
 
 #create Internet Gateway
+echo -e "\e[1;32m => provision \"$vcn_internet_gateway_name\" internet gateway \e[0m"
 vcn_internet_gateway_id=$(oci network internet-gateway list --compartment-id $compartment_id --raw-output --query "data[?contains(\"display-name\",'$vcn_internet_gateway_name')].id | [0]")
 [ -z "$vcn_internet_gateway_id" ] && \
 vcn_internet_gateway_id=$(oci network internet-gateway create --display-name "$vcn_internet_gateway_name" --compartment-id $compartment_id --is-enabled true --vcn-id $vcn_id --wait-for-state AVAILABLE --query data.id)
@@ -31,6 +29,7 @@ echo -e "\e[1;32m vcn_internet_gateway_id : $vcn_internet_gateway_id \e[0m"
 
 
 #create NAT Gateway
+echo -e "\e[1;32m => provision \"$vcn_nat_gateway_name\" NAT gateway \e[0m"
 vcn_nat_gateway_id=$(oci network nat-gateway list --compartment-id $compartment_id --raw-output --query "data[?contains(\"display-name\",'$vcn_nat_gateway_name')].id | [0]")
 [ -z "$vcn_nat_gateway_id" ] && \
 vcn_nat_gateway_id=$(oci network nat-gateway create --display-name "$vcn_nat_gateway_name" --compartment-id $compartment_id --vcn-id $vcn_id --wait-for-state AVAILABLE  --query data.id)
@@ -38,6 +37,7 @@ vcn_nat_gateway_id=${vcn_nat_gateway_id//\"}
 echo -e "\e[1;32m vcn_nat_gateway_id : $vcn_nat_gateway_id \e[0m"
 
 
+echo -e "\e[1;32m => provision \"$vcn_public_subnet_name\" subnet \e[0m"
 #create public security list
 vcn_public_security_list_id=$(oci network security-list list --compartment-id $compartment_id --vcn-id $vcn_id --raw-output --query "data[?contains(\"display-name\",'$vcn_public_security_list_name')].id | [0]")
 [ -z "$vcn_public_security_list_id" ] && \
@@ -64,6 +64,7 @@ vcn_public_subnet_id=${vcn_public_subnet_id//\"}
 echo -e "\e[1;32m vcn_public_subnet_id : $vcn_public_subnet_id \e[0m"
 
 
+echo -e "\e[1;32m => provision \"$vcn_private_subnet_name\" subnet \e[0m"
 #create private security list
 vcn_private_security_list_id=$(oci network security-list list --compartment-id $compartment_id --vcn-id $vcn_id --raw-output --query "data[?contains(\"display-name\",'$vcn_private_security_list_name')].id | [0]")
 [ -z "$vcn_private_security_list_id" ] && \
