@@ -6,7 +6,7 @@ SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 echo -e "\e[1;32m running in $SCRIPTPATH \e[0m"
 echo -e "\e[1;32m => provision \"$vcn_name\" network \e[0m"
 
-#create compartment
+#get compartment
 compartment_id=$(oci iam compartment list --all --compartment-id-in-subtree true --access-level ACCESSIBLE --include-root --raw-output --query "data[?\"lifecycle-state\" == 'ACTIVE'] | [?contains(\"name\",'$compartment_name')].id | [0]")
 echo -e "\e[1;32m compartment_id : $compartment_id \e[0m"
 
